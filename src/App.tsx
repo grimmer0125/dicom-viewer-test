@@ -7,6 +7,9 @@
 //  https://www.cornerstonejs.org/live-examples/segmentationvolume
 //  https://github.com/cornerstonejs/cornerstone3D/blob/a283bbc44d8baddc69cdd6ce56720e9c3241654a/packages/adapters/examples/segmentationVolume
 //  setupMultpleViewports
+// example 3 (4th ver): VOLUME_3D view
+//  https://www.cornerstonejs.org/live-examples/volumeviewport3d
+//  https://github.com/cornerstonejs/cornerstone3D/blob/a283bbc44d8baddc69cdd6ce56720e9c3241654a/packages/core/examples/volumeViewport3D/index.ts#L40
 import { useEffect, useRef, useState } from 'react';
 // import createImageIdsAndCacheMetaData from "./lib/createImageIdsAndCacheMetaData"
 import * as cornerstone from '@cornerstonejs/core';
@@ -56,6 +59,7 @@ function App() {
   const elementRef = useRef<HTMLDivElement>(null);
   const element2Ref = useRef<HTMLDivElement>(null);
   const element3Ref = useRef<HTMLDivElement>(null);
+  const element4Ref = useRef<HTMLDivElement>(null);
 
   const running = useRef(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -69,7 +73,7 @@ function App() {
     renderingEngineId: 'MY_RENDERING_ENGINE_ID',
     toolGroup: null,
     toolGroupId: 'MY_TOOL_GROUP_ID',
-    viewportIds: ['CT_AXIAL', 'CT_SAGITTAL', 'CT_CORONAL'],
+    viewportIds: ['CT_AXIAL', 'CT_SAGITTAL', 'CT_CORONAL', 'CT_VOLUME'],
     volumeId: '',
     segmentationId: 'LOAD_SEG_ID:' + cornerstone.utilities.uuidv4(),
     referenceImageIds: [],
@@ -79,7 +83,12 @@ function App() {
   });
 
   useEffect(() => {
-    if (!elementRef.current || !element2Ref.current || !element3Ref.current) {
+    if (
+      !elementRef.current ||
+      !element2Ref.current ||
+      !element3Ref.current ||
+      !element4Ref.current
+    ) {
       console.log('Rendering engine not initializing');
       return;
     }
@@ -132,6 +141,15 @@ function App() {
           defaultOptions: {
             orientation: cornerstone.Enums.OrientationAxis.CORONAL,
             background: [0.2, 0, 0.2] as Types.RGB,
+          },
+        },
+        {
+          viewportId: state.current.viewportIds[3],
+          type: cornerstone.Enums.ViewportType.VOLUME_3D,
+          element: element4Ref.current,
+          defaultOptions: {
+            orientation: cornerstone.Enums.OrientationAxis.CORONAL,
+            background: [160 / 255, 164 / 255, 217 / 255] as Types.RGB,
           },
         },
       ];
@@ -280,7 +298,7 @@ function App() {
     setup();
 
     // Create a stack viewport
-  }, [elementRef, element2Ref, element3Ref, running]);
+  }, [elementRef, element2Ref, element3Ref, element4Ref, running]);
 
   const getSegmentationIds = () => {
     return csToolsSegmentation.state.getSegmentations().map((x) => x.segmentationId);
@@ -328,13 +346,26 @@ function App() {
     toolGroup.addViewport(viewportIds[0], renderingEngineId);
     toolGroup.addViewport(viewportIds[1], renderingEngineId);
     toolGroup.addViewport(viewportIds[2], renderingEngineId);
+    toolGroup.addViewport(viewportIds[3], renderingEngineId);
+
     await volume.load();
+
+    const viewport = renderingEngine.getViewport(viewportIds[3]);
+
     await cornerstone.setVolumesForViewports(
       renderingEngine,
       [{ volumeId: state.current.volumeId }],
       viewportIds,
     );
+
+    viewport.setProperties({
+      // preset candidates
+      // https://github.com/cornerstonejs/cornerstone3D/blob/main/packages/core/src/constants/viewportPresets.ts
+      preset: 'MR-MIP', //'CT-Bone',
+    });
+
     renderingEngine.render();
+    // viewport.render(); // also work to render 4 views and one is VOLUME_3D
   };
   const readDicomFiles = async (files: File[]) => {
     // read file
@@ -604,6 +635,14 @@ function App() {
         ></div>
         <div
           ref={element3Ref}
+          style={{
+            width: '512px',
+            height: '512px',
+            backgroundColor: '#123',
+          }}
+        ></div>
+        <div
+          ref={element4Ref}
           style={{
             width: '512px',
             height: '512px',
