@@ -24,6 +24,7 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 import { init as csToolsInit } from '@cornerstonejs/tools';
 // import * as csDicomImageLoader from "@cornerstonejs/dicom-image-loader";
 import {
+  addManipulationBindings,
   convertMultiframeImageIds /* initProviders, initVolumeLoader */,
   prefetchMetadataInformation,
 } from './helper';
@@ -91,6 +92,14 @@ function App() {
     console.log('Rendering engine initializing');
 
     const setupMultpleViewports = async () => {
+      // 3d tool
+      const toolGroupId = 'TOOL_GROUP_ID';
+      const toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
+      // Add the tools to the tool group and specify which volume they are pointing at
+      addManipulationBindings(toolGroup, {
+        is3DViewport: true,
+      });
+
       // 2d tool
       // state.current.toolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(
       //   state.current.toolGroupId,
@@ -150,6 +159,9 @@ function App() {
 
       renderingEngine.setViewports(viewportInputArray);
       state.current.renderingEngine = renderingEngine;
+
+      // 3d tool
+      toolGroup.addViewport(state.current.viewportIds[3], state.current.renderingEngineId);
     };
 
     const setupSingleFileView = async () => {
