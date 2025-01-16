@@ -66,8 +66,6 @@ function App() {
 
   const viewport = useRef(null);
 
-  // const dicomMap = new Map();
-
   const state = useRef({
     renderingEngine: null,
     renderingEngineId: 'MY_RENDERING_ENGINE_ID',
@@ -398,131 +396,11 @@ function App() {
     try {
       console.log('Loading files:', files);
 
-      // Create object URLs for the DICOM files
-      // const imageIds = files.map(file => {
-      //   const objectUrl = URL.createObjectURL(file);
-      //   console.log('Created URL for file:', objectUrl);
-      //   // return `wadouri:${objectUrl}`;
-      //   return `dicomweb:${objectUrl}`;
-      // });
-
-      // console.log('File details:', files.map(f => ({
-      //   name: f.name,
-      //   size: f.size,
-      //   type: f.type
-      // })));
-
-      // console.log('Image IDs:', imageIds);
-
       const imageId = cornerstoneDICOMImageLoader.wadouri.fileManager.add(files[0]);
 
-      // const files = event.dataTransfer.files;
       console.log('Image ID:', imageId);
 
       loadAndViewImage(imageId);
-
-      // 1st:
-      //   // Create rendering engine
-      //   const renderingEngine = new RenderingEngine(renderingEngineId);
-      //   console.log('Created rendering engine');
-
-      //   // Create volume
-      //   console.log('Creating volume with ID:', volumeId);
-      //   const volume = await volumeLoader.createAndCacheVolume(volumeId, {
-      //     imageIds,
-      //   });
-      //   console.log('Created volume:', volume);
-
-      //   // @ts-ignore
-      //   await volume.load();
-
-      //   // Create viewport configurations
-      //   const viewportConfigs = [
-      //     {
-      //       viewportId: 'AXIAL',
-      //       type: Enums.ViewportType.ORTHOGRAPHIC,
-      //       defaultOptions: {
-      //         orientation: Enums.OrientationAxis.AXIAL,
-      //       },
-      //     },
-      //     {
-      //       viewportId: 'SAGITTAL',
-      //       type: Enums.ViewportType.ORTHOGRAPHIC,
-      //       defaultOptions: {
-      //         orientation: Enums.OrientationAxis.SAGITTAL,
-      //       },
-      //     },
-      //     {
-      //       viewportId: 'CORONAL',
-      //       type: Enums.ViewportType.ORTHOGRAPHIC,
-      //       defaultOptions: {
-      //         orientation: Enums.OrientationAxis.CORONAL,
-      //       },
-      //     },
-      //     {
-      //       viewportId: '3D',
-      //       type: Enums.ViewportType.VOLUME_3D,
-      //     },
-      //   ];
-
-      //   const elements = [
-      //     viewportRefs.axial.current,
-      //     viewportRefs.sagittal.current,
-      //     viewportRefs.coronal.current,
-      //     viewportRefs.volume3d.current,
-      //   ];
-
-      //   // Filter and create valid viewport inputs
-      //   const validViewports = elements.reduce<ViewportInput[]>((acc, element, index) => {
-      //     if (!element) return acc;
-
-      //     const config = viewportConfigs[index];
-      //     if (config.type === Enums.ViewportType.ORTHOGRAPHIC) {
-      //       acc.push({
-      //         // ... orthographic viewport configuration
-      //       } as OrthographicViewportInput);
-      //     } else {
-      //       acc.push({
-      //         // ... volume viewport configuration
-      //       } as VolumeViewportInput);
-      //     }
-      //     return acc;
-      //   }, []);
-
-      //   // Enable elements and setup viewports
-      //   for (const viewportInput of validViewports) {
-      //       renderingEngine.enableElement(viewportInput);
-      //     const viewport = renderingEngine.getViewport(viewportInput.viewportId);
-
-      //     if (viewport instanceof BaseVolumeViewport) {
-      //       await viewport.addVolumes([{ volumeId }]);
-      //     }
-      //   }
-
-      //   // Set up tools
-      //   const toolGroupId = 'MY_TOOLGROUP';
-      //   const toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
-
-      //   if (toolGroup) {
-      //     toolGroup.addTool(RectangleROITool.toolName);
-
-      //     toolGroup.setToolActive(RectangleROITool.toolName, {
-      //       bindings: [
-      //         {
-      //           mouseButton: csToolsEnums.MouseBindings.Primary,
-      //         },
-      //       ],
-      //     });
-
-      //     validViewports.forEach(viewport => {
-      //       if (viewport) {
-      //         toolGroup.addViewport(viewport.viewportId, renderingEngineId);
-      //       }
-      //     });
-      //   }
-
-      //   // Render all viewports
-      //   renderingEngine.render();
     } catch (error) {
       console.error('Error loading DICOM files:', error);
     }
