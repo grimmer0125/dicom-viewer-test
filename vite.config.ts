@@ -1,6 +1,6 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
 import { viteCommonjs } from "@originjs/vite-plugin-commonjs"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
 
 /**
  * Vite configuration for the application.
@@ -30,6 +30,7 @@ import { viteCommonjs } from "@originjs/vite-plugin-commonjs"
  * ```
  */
 export default defineConfig({
+  base: '/dicm-viewer-test/',
   plugins: [
     react(),
     // for dicom-parser
