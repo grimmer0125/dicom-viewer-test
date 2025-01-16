@@ -24,13 +24,10 @@ import * as cornerstoneTools from '@cornerstonejs/tools';
 import { init as csToolsInit } from '@cornerstonejs/tools';
 // import * as csDicomImageLoader from "@cornerstonejs/dicom-image-loader";
 import {
-  addManipulationBindings,
   convertMultiframeImageIds /* initProviders, initVolumeLoader */,
   prefetchMetadataInformation,
 } from './helper';
-import labelmapTools from './labelmapTools';
 // import uids from './uids';
-import { BrushTool } from '@cornerstonejs/tools';
 const { segmentation: csToolsSegmentation } = cornerstoneTools;
 
 const {
@@ -94,22 +91,20 @@ function App() {
     console.log('Rendering engine initializing');
 
     const setupMultpleViewports = async () => {
-      state.current.toolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(
-        state.current.toolGroupId,
-      );
-      addManipulationBindings(state.current.toolGroup, {
-        toolMap: labelmapTools.toolMap,
-      });
-
-      cornerstoneTools.addTool(BrushTool);
-
-      state.current.toolGroup.addToolInstance('CircularBrush', BrushTool.toolName, {
-        activeStrategy: 'FILL_INSIDE_CIRCLE',
-      });
-
-      state.current.toolGroup.setToolActive('CircularBrush', {
-        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }],
-      });
+      // 2d tool
+      // state.current.toolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(
+      //   state.current.toolGroupId,
+      // );
+      // addManipulationBindings(state.current.toolGroup, {
+      //   toolMap: labelmapTools.toolMap,
+      // });
+      // cornerstoneTools.addTool(BrushTool);
+      // state.current.toolGroup.addToolInstance('CircularBrush', BrushTool.toolName, {
+      //   activeStrategy: 'FILL_INSIDE_CIRCLE',
+      // });
+      // state.current.toolGroup.setToolActive('CircularBrush', {
+      //   bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }],
+      // });
 
       const renderingEngine = new RenderingEngine(state.current.renderingEngineId);
 
@@ -341,10 +336,11 @@ function App() {
       imageIds: referenceImageIds,
     });
 
-    toolGroup.addViewport(viewportIds[0], renderingEngineId);
-    toolGroup.addViewport(viewportIds[1], renderingEngineId);
-    toolGroup.addViewport(viewportIds[2], renderingEngineId);
-    toolGroup.addViewport(viewportIds[3], renderingEngineId);
+    // 2d tool
+    // toolGroup.addViewport(viewportIds[0], renderingEngineId);
+    // toolGroup.addViewport(viewportIds[1], renderingEngineId);
+    // toolGroup.addViewport(viewportIds[2], renderingEngineId);
+    // toolGroup.addViewport(viewportIds[3], renderingEngineId);
 
     await volume.load();
 
