@@ -28,7 +28,9 @@ import {
   convertMultiframeImageIds /* initProviders, initVolumeLoader */,
   prefetchMetadataInformation,
 } from './helper';
+import labelmapTools from './labelmapTools';
 // import uids from './uids';
+import { BrushTool } from '@cornerstonejs/tools';
 const { segmentation: csToolsSegmentation } = cornerstoneTools;
 
 const {
@@ -92,6 +94,24 @@ function App() {
     console.log('Rendering engine initializing');
 
     const setupMultpleViewports = async () => {
+      /** ISSUE: if we init 3d tool first, then 2d tool would throw exceptions at
+       * addManipulationBindings' toolGroup.addToolInstance(toolName, config.baseTool, config.configuration);
+       */
+      // 2d tool
+      state.current.toolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(
+        state.current.toolGroupId,
+      );
+      addManipulationBindings(state.current.toolGroup, {
+        toolMap: labelmapTools.toolMap,
+      });
+      cornerstoneTools.addTool(BrushTool);
+      state.current.toolGroup.addToolInstance('CircularBrush', BrushTool.toolName, {
+        activeStrategy: 'FILL_INSIDE_CIRCLE',
+      });
+      state.current.toolGroup.setToolActive('CircularBrush', {
+        bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }],
+      });
+
       // 3d tool
       const toolGroupId = 'TOOL_GROUP_ID';
       const toolGroup = ToolGroupManager.createToolGroup(toolGroupId);
@@ -99,21 +119,6 @@ function App() {
       addManipulationBindings(toolGroup, {
         is3DViewport: true,
       });
-
-      // 2d tool
-      // state.current.toolGroup = cornerstoneTools.ToolGroupManager.createToolGroup(
-      //   state.current.toolGroupId,
-      // );
-      // addManipulationBindings(state.current.toolGroup, {
-      //   toolMap: labelmapTools.toolMap,
-      // });
-      // cornerstoneTools.addTool(BrushTool);
-      // state.current.toolGroup.addToolInstance('CircularBrush', BrushTool.toolName, {
-      //   activeStrategy: 'FILL_INSIDE_CIRCLE',
-      // });
-      // state.current.toolGroup.setToolActive('CircularBrush', {
-      //   bindings: [{ mouseButton: cornerstoneTools.Enums.MouseBindings.Primary }],
-      // });
 
       const renderingEngine = new RenderingEngine(state.current.renderingEngineId);
 
@@ -349,9 +354,9 @@ function App() {
     });
 
     // 2d tool
-    // toolGroup.addViewport(viewportIds[0], renderingEngineId);
-    // toolGroup.addViewport(viewportIds[1], renderingEngineId);
-    // toolGroup.addViewport(viewportIds[2], renderingEngineId);
+    toolGroup.addViewport(viewportIds[0], renderingEngineId);
+    toolGroup.addViewport(viewportIds[1], renderingEngineId);
+    toolGroup.addViewport(viewportIds[2], renderingEngineId);
     // toolGroup.addViewport(viewportIds[3], renderingEngineId);
 
     await volume.load();
